@@ -171,6 +171,7 @@ export class XmlSaxParser extends XmlDisposable<XmlSaxParser> {
             );
         }
         const [ctxt, context] = xmlCreatePushParserCtxt(handler, options.url ?? null);
+        /* c8 ignore next 3, defensive: the context creation fails only when out of memory */
         if (!ctxt) {
             throw new XmlError('Failed to create the parser context');
         }
@@ -325,6 +326,7 @@ export class XmlSaxParser extends XmlDisposable<XmlSaxParser> {
 
     private get details(): ErrorDetail[] {
         const errIndex = errorIndices.get(this._ptr);
+        /* c8 ignore next, defensive: a live context always has its error storage */
         return errIndex === undefined ? [] : error.storage.get(errIndex);
     }
 
@@ -353,6 +355,7 @@ export class XmlSaxParser extends XmlDisposable<XmlSaxParser> {
             this._terminated = true;
             xmlStopParser(this._ptr);
             throw err;
+            /* c8 ignore next, unreachable: the catch always rethrows */
         } finally {
             this.parsing = false;
         }
