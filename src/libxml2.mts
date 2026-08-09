@@ -133,12 +133,6 @@ function withCString<R>(str: Uint8Array, process: (buf: number, len: number) => 
     }
 
     const buf = libxml2._malloc(str.length + 1);
-    // _malloc returns 0 instead of aborting when the memory cannot grow
-    // anymore; writing there would silently corrupt the module's low memory
-    /* c8 ignore next 3, needs ~2GB of allocations to trigger */
-    if (!buf) {
-        throw new XmlError(`Failed to allocate ${str.length + 1} bytes in the WebAssembly memory`);
-    }
     libxml2.HEAPU8.set(str, buf);
     libxml2.HEAPU8[buf + str.length] = 0;
     const ret = process(buf, str.length);
